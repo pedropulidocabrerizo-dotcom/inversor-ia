@@ -38,12 +38,12 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
 <body><main>
 <header class="top"><div class="brand"><div class="logo">↗</div><div>INVERSOR IA<div class="muted">Tu panel de inversión</div></div></div><span class="tag">MODO SIMULACIÓN</span></header>
 <section class="card">
- <div class="muted">Valor de cartera registrada</div><div class="balance" id="total">47,00 €</div>
- <div class="row"><span class="muted">Efectivo disponible</span><b id="cash">47,00 €</b></div>
+ <div class="muted">Valor de cartera registrada</div><div class="balance" id="total">45,17 €</div>
+ <div class="row"><span class="muted">Efectivo disponible</span><b id="cash">0,00 €</b></div>
  <div class="row"><span class="muted">Resultado simulado</span><b id="pnl" class="green">0,00 €</b></div>
 </section>
 <div class="stats">
- <div class="stat"><span class="muted">Capital inicial</span><b id="initial">47,00 €</b></div>
+ <div class="stat"><span class="muted">Capital inicial</span><b id="initial">48,01 €</b></div>
  <div class="stat"><span class="muted">Posiciones abiertas</span><b id="positions">0</b></div>
 </div>
 <nav><button class="active" data-tab="home">Inicio</button><button data-tab="portfolio">Cartera</button><button data-tab="trade">Operación</button><button data-tab="engine">Gestor IA</button><button data-tab="report">Informe</button><button data-tab="settings">Ajustes</button></nav>
@@ -60,11 +60,27 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
  <label>Precio por unidad (€)</label><input id="price" type="number" min="0.0001" step="0.0001" placeholder="Obligatorio para calcular unidades">
  <label>Fecha de la operación</label><input id="tradeDate" type="date">
  <button id="saveTrade">Guardar simulación</button><p id="tradeMsg" class="muted"></p></div></section>
-<section id="engine" class="hidden"><div class="card"><h2>Gestor IA</h2><div class="notice">El análisis automático está pausado. Esta versión todavía no recibe cotizaciones verificadas ni datos en directo de Trade Republic, por lo que no realizará compras ni ventas automáticas.</div><p class="muted">Puedes consultar tu posición y registrar operaciones ficticias manualmente. Más adelante podremos añadir análisis con datos de mercado fiables, sin enviar órdenes reales.</p><div class="row"><span class="muted">Efectivo disponible</span><b id="engineCash">0,00 €</b></div></div></section>
+<section id="engine" class="hidden">
+ <div class="card"><h2>Gestor IA · Análisis de tu cartera</h2>
+  <div class="notice">Análisis educativo basado en los datos que has introducido. No hay cotizaciones en directo, conexión con Trade Republic ni recomendaciones personalizadas. No se ejecutan compras ni ventas.</div>
+  <div class="stats" style="margin-top:12px">
+   <div class="stat"><span class="muted">Activo analizado</span><b id="aiAsset">FIT GROUP</b></div>
+   <div class="stat"><span class="muted">Peso en cartera</span><b id="aiWeight">100 %</b></div>
+   <div class="stat"><span class="muted">Precio medio de compra</span><b id="aiCostPrice">90,55 €</b></div>
+   <div class="stat"><span class="muted">Referencia actual</span><b id="aiCurrentPrice">85,19 €</b></div>
+  </div>
+ </div>
+ <div class="card"><h2>Lectura de la posición</h2><div id="aiReading" class="item"></div><div id="aiRisk" class="item"></div><p class="muted">La app no dispone de información financiera verificada del emisor. Por eso no calcula una calificación fundamental ni predice la evolución del precio.</p></div>
+ <div class="card"><h2>Simulador de escenarios</h2><p class="muted">Prueba cómo cambiaría el valor de tus 0,53021 unidades si el precio variase. Estos escenarios son hipotéticos, no predicciones.</p>
+  <label for="scenarioChange">Variación hipotética del precio (%)</label><input id="scenarioChange" type="number" min="-100" max="500" step="1" value="10">
+  <button id="calcScenario">Calcular escenario</button><div id="scenarioResult" class="item muted">Introduce una variación y pulsa calcular. No se modifica tu cartera.</div>
+ </div>
+ <div class="card"><h2>Qué vigilar</h2><ul class="muted"><li>Comprobar en Trade Republic el valor y el precio medio cuando quieras actualizar tus datos.</li><li>Revisar si la posición sigue representando toda tu cartera: ahora mismo está concentrada en un solo activo.</li><li>Antes de decidir, considerar comisiones, impuestos y el riesgo de pérdida.</li></ul><div class="row"><span class="muted">Efectivo disponible</span><b id="engineCash">0,00 €</b></div></div>
+</section>
 <section id="report" class="hidden"><div class="card"><h2>Informe de cartera</h2><p class="muted">El informe se genera cuando lo solicitas. Esta versión no funciona en segundo plano ni envía avisos.</p><button id="makeReport">Generar informe ahora</button><div id="reportSummary" class="item muted">Aún no se ha generado el informe.</div></div><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><div class="actions"><button class="secondary" id="export">Exportar operaciones CSV</button><button class="secondary" id="backupAll">Copia completa JSON</button></div></div></section>
 <section id="settings" class="hidden"><div class="card"><h2>Preferencias</h2><label>Perfil inversor</label><select id="profile"><option value="Dinámico">Dinámico</option><option value="Equilibrado">Equilibrado</option><option value="Conservador">Conservador</option></select>
  <label>Momento del informe</label><select id="reportTime"><option value="Al cierre del mercado">Al cierre del mercado</option><option value="Antes de la apertura">Antes de la apertura</option><option value="Dos veces al día">Dos veces al día</option></select>
- <label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="47"><button id="saveSettings">Guardar preferencias</button><p class="muted">Los datos se guardan en este navegador. Borrar los datos del navegador puede eliminar la cartera.</p></div>
+ <label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="48.01"><button id="saveSettings">Guardar preferencias</button><p class="muted">Los datos se guardan en este navegador. Borrar los datos del navegador puede eliminar la cartera.</p></div>
  <div class="card"><h2>Copia de seguridad completa</h2><p class="muted">Guarda o recupera cartera, efectivo, posiciones, operaciones, preferencias e informes. Importar sustituye los datos actuales de este navegador.</p><div class="actions"><button class="secondary" id="backupSettings">Descargar copia completa</button><label class="btn" for="restoreFile">Restaurar copia JSON</label><input id="restoreFile" type="file" accept=".json,application/json" style="display:none"></div><p id="backupMsg" class="muted"></p></div><div class="card"><h2>Trade Republic</h2><p class="muted">No existe conexión configurada. No introduzcas credenciales. Para seguimiento, utiliza extractos descargados desde los canales oficiales y registra los datos manualmente.</p></div></section>
 <footer>Herramienta educativa. No es asesoramiento financiero y no ejecuta inversiones reales.</footer>
 </main>
@@ -73,11 +89,11 @@ const KEY='invIA';
 const euro=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(Number(n)||0);
 const round=n=>Math.round((Number(n)+Number.EPSILON)*100)/100;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function fresh(){return {version:2,initial:47,cash:47,trades:[],holdings:{},preferences:{profile:'Dinámico',reportTime:'Al cierre del mercado'},reports:[],demo:{cycle:0}}}
+function fresh(){return {version:3,initial:48.01,cash:0,trades:[],holdings:{'FIT GROUP':{units:0.53021,cost:48.01,lastPrice:45.17/0.53021}},preferences:{profile:'Dinámico',reportTime:'Al cierre del mercado'},reports:[],demo:{cycle:0}}}
 function load(){
  let raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
  let d=raw&&typeof raw==='object'?raw:fresh();
- d.initial=Number.isFinite(Number(d.initial))?Number(d.initial):47;
+ d.initial=Number.isFinite(Number(d.initial))?Number(d.initial):48.01;
  d.cash=Number.isFinite(Number(d.cash))?Number(d.cash):d.initial;
  d.trades=Array.isArray(d.trades)?d.trades:[];
  d.holdings=d.holdings&&typeof d.holdings==='object'?d.holdings:{};
@@ -116,6 +132,7 @@ function render(){
  document.getElementById('profileLabel').textContent=data.preferences.profile;document.getElementById('reportLabel').textContent=data.preferences.reportTime;
  document.getElementById('engineCash').textContent=euro(data.cash);
  renderDemo();
+ renderAI();
 }
 function recordTrade(asset,side,amount,price,source='manual',tradeDate=null){
  amount=round(amount);price=Number(price);
@@ -141,6 +158,36 @@ document.getElementById('saveTrade').onclick=()=>{
 // El motor automático queda desactivado hasta disponer de datos de mercado verificables.
 const demoAssets=[];
 function renderDemo(){const el=document.getElementById('demoPrices');if(el)el.textContent='Análisis automático pausado: no hay cotizaciones verificadas conectadas.';}
+function renderAI(){
+ const entries=Object.entries(data.holdings);
+ const units=entries.reduce((a,[,h])=>a+h.units,0);
+ const value=holdingsValue();
+ const total=data.cash+value;
+ const [name,h]=entries[0]||['Sin posiciones',{units:0,cost:0,lastPrice:0}];
+ const current=h.units>0&&h.lastPrice>0?h.lastPrice:0;
+ const avg=h.units>0?h.cost/h.units:0;
+ const weight=total>0?value/total*100:0;
+ document.getElementById('aiAsset').textContent=name;
+ document.getElementById('aiWeight').textContent=weight.toFixed(1).replace('.',',')+' %';
+ document.getElementById('aiCostPrice').textContent=euro(avg);
+ document.getElementById('aiCurrentPrice').textContent=euro(current);
+ const pl=value-investedCost();
+ document.getElementById('aiReading').textContent=entries.length?`${h.units.toFixed(5)} unidades registradas. Coste total ${euro(h.cost)} y valor de referencia ${euro(h.units*current)}. Resultado no realizado aproximado: ${euro(pl)}.`:'No hay posiciones registradas.';
+ document.getElementById('aiRisk').textContent=entries.length===1&&weight>99.9?'Concentración elevada: el 100 % del valor invertido está en un único activo. Una caída de ese activo afectaría a toda la cartera.':'La cartera contiene varias posiciones o efectivo; revisa su distribución y riesgos.';
+ document.getElementById('engineCash').textContent=euro(data.cash);
+}
+document.getElementById('calcScenario').onclick=()=>{
+ const pct=Number(document.getElementById('scenarioChange').value);
+ const out=document.getElementById('scenarioResult');
+ if(!Number.isFinite(pct)||pct < -100||pct>500){out.textContent='Introduce una variación entre -100 % y 500 %.';return;}
+ const h=data.holdings['FIT GROUP'];
+ if(!h){out.textContent='No se encuentra FIT GROUP en la cartera.';return;}
+ const current=h.lastPrice>0?h.lastPrice:0;
+ const newPrice=current*(1+pct/100);
+ const newValue=h.units*newPrice;
+ const pl=newValue-h.cost;
+ out.textContent=`Con una variación hipotética del ${pct.toFixed(1).replace('.',',')} %, el precio sería ${euro(newPrice)}, el valor de la posición ${euro(newValue)} y el resultado frente al coste registrado ${euro(pl)}. Es solo un cálculo hipotético; tu cartera no se ha modificado.`;
+};
 const runEngine=document.getElementById('runEngine');if(runEngine)runEngine.disabled=true;
 const resetDemo=document.getElementById('resetDemo');if(resetDemo)resetDemo.disabled=true;
 document.getElementById('saveSettings').onclick=()=>{
