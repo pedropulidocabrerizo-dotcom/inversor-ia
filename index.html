@@ -1,32 +1,40 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#10251f"><meta name="description" content="Panel personal de seguimiento y simulación de inversiones.">
-<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
-<link rel="apple-touch-icon" href="icon.svg"><title>Inversor IA</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10251f">
+<meta name="description" content="Panel educativo de seguimiento y simulación de inversiones.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Inversor IA</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1512;--panel:#13231d;--panel2:#1b3028;--text:#f1f7f3;--muted:#a8b9af;--green:#8fe0ad;--line:#294238;--amber:#f4c66b}
+:root{color-scheme:dark;--bg:#0b1512;--panel:#13231d;--panel2:#1b3028;--text:#f1f7f3;--muted:#a8b9af;--green:#8fe0ad;--line:#294238;--amber:#f4c66b;--red:#ff9292}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
-main{max-width:760px;margin:auto;padding:22px 16px 40px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+main{max-width:820px;margin:auto;padding:22px 16px 40px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
 .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.3px}.logo{width:42px;height:42px;border-radius:13px;background:#244b39;display:grid;place-items:center;color:var(--green);font-size:22px}
 .tag{font-size:12px;color:var(--amber);border:1px solid #715b2e;padding:5px 9px;border-radius:30px}
 h1{font-size:27px;margin:4px 0}h2{font-size:17px;margin:0 0 12px}.muted{color:var(--muted);font-size:13px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:17px;margin:13px 0}
-.balance{font-size:36px;font-weight:800;letter-spacing:-1px;margin:5px 0}.green{color:var(--green)}
+.balance{font-size:36px;font-weight:800;letter-spacing:-1px;margin:5px 0}.green{color:var(--green)}.red{color:var(--red)}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:var(--panel2);padding:13px;border-radius:13px}.stat b{display:block;font-size:19px;margin-top:5px}
 nav{display:flex;gap:8px;overflow:auto;margin:17px 0}nav button{white-space:nowrap;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 14px;border-radius:30px}
 nav button.active{background:#28533d;border-color:#427d5d}
 button,.btn{cursor:pointer;border:0;border-radius:12px;padding:12px 15px;background:#8fe0ad;color:#092016;font-weight:750}
 button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
-input,select,textarea{width:100%;background:#0c1914;color:var(--text);border:1px solid var(--line);padding:12px;border-radius:11px;font:inherit;margin:6px 0 12px}
+button:disabled{opacity:.45;cursor:not-allowed}
+input,select{width:100%;background:#0c1914;color:var(--text);border:1px solid var(--line);padding:12px;border-radius:11px;font:inherit;margin:6px 0 12px}
 label{font-size:13px;color:var(--muted)}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
 .notice{background:#342b17;border:1px solid #6e592d;color:#f6dda1;border-radius:13px;padding:12px;font-size:13px;line-height:1.5}
 .item{padding:11px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
 .hidden{display:none}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pill{font-size:11px;border:1px solid var(--line);border-radius:20px;padding:4px 8px;color:var(--muted)}
 footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}.balance{font-size:32px}}
 @media(min-width:600px){main{padding-top:34px}.balance{font-size:44px}}
-</style></head>
+</style>
+</head>
 <body><main>
 <header class="top"><div class="brand"><div class="logo">↗</div><div>INVERSOR IA<div class="muted">Tu panel de inversión</div></div></div><span class="tag">MODO SIMULACIÓN</span></header>
 <section class="card">
@@ -38,64 +46,128 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
  <div class="stat"><span class="muted">Capital inicial</span><b id="initial">47,00 €</b></div>
  <div class="stat"><span class="muted">Posiciones abiertas</span><b id="positions">0</b></div>
 </div>
-<nav><button class="active" data-tab="home">Inicio</button><button data-tab="portfolio">Cartera</button><button data-tab="trade">Simular operación</button><button data-tab="report">Informe</button><button data-tab="settings">Ajustes</button></nav>
+<nav><button class="active" data-tab="home">Inicio</button><button data-tab="portfolio">Cartera</button><button data-tab="trade">Operación</button><button data-tab="engine">Gestor IA</button><button data-tab="report">Informe</button><button data-tab="settings">Ajustes</button></nav>
 <section id="home">
- <div class="card"><h2>Resumen de hoy</h2><p id="daily" class="muted">Todavía no hay datos de mercado conectados. Esta versión registra simulaciones y movimientos que introduzcas tú.</p>
- <div class="notice">Esta aplicación no está conectada a Trade Republic, no recibe cotizaciones en directo y no envía órdenes. No introduzcas aquí tu contraseña, PIN ni códigos de verificación.</div>
- <div class="card" style="margin:14px 0 0;background:#182b23"><h2>Tu estrategia activa</h2><div class="row"><span class="muted">Perfil</span><b id="profileLabel">Dinámico</b></div><div class="row"><span class="muted">Gestión</span><b id="autonomyLabel">Cartera simulada automática</b></div><div class="row"><span class="muted">Informe</span><b id="reportLabel">Al cierre del mercado</b></div><p class="muted" id="strategyText">Simulación educativa. Sin derivados, apalancamiento ni órdenes reales.</p></div></div>
- <div class="card"><h2>Tu siguiente paso</h2><p class="muted">Practica con operaciones ficticias y registra tus movimientos reales manualmente desde el extracto de tu broker. Así podrás revisar la estrategia sin dar acceso a tu cuenta.</p>
- <button onclick="showTab('trade')">Probar una operación simulada</button></div>
+ <div class="card"><h2>Resumen</h2><p id="daily" class="muted">Simulador listo. No hay cotizaciones reales conectadas.</p>
+ <div class="notice">MODO EDUCATIVO: las cotizaciones de demostración son ficticias. Esta aplicación no está conectada a Trade Republic, no envía órdenes y no debe recibir contraseñas, PIN ni códigos bancarios.</div>
+ <div class="card" style="margin:14px 0 0;background:#182b23"><h2>Estrategia activa</h2><div class="row"><span class="muted">Perfil</span><b id="profileLabel">Dinámico</b></div><div class="row"><span class="muted">Gestión</span><b>Simulación automática supervisada</b></div><div class="row"><span class="muted">Informe</span><b id="reportLabel">Al cierre del mercado</b></div><p class="muted">Sin derivados, apalancamiento ni órdenes reales. El motor solo opera con precios de demostración o precios que introduzcas.</p></div></div>
+ <div class="card"><h2>Acciones rápidas</h2><div class="actions"><button onclick="showTab('engine')">Analizar mercado demo</button><button class="secondary" onclick="showTab('trade')">Registrar operación</button></div></div>
 </section>
-<section id="portfolio" class="hidden"><div class="card"><h2>Posiciones simuladas</h2><div id="holdingList" class="muted">Todavía no tienes posiciones.</div></div></section>
-<section id="trade" class="hidden"><div class="card"><h2>Nueva operación ficticia</h2><p class="muted">No se envía ninguna orden al mercado.</p>
- <label>Activo (nombre o ticker)</label><input id="asset" placeholder="Ej. ETF global (solo simulación)">
- <div class="row"><div style="flex:1"><label>Tipo</label><select id="side"><option value="buy">Compra</option><option value="sell">Venta</option></select></div><div style="flex:1"><label>Importe en euros</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="5,00"></div></div>
- <label>Precio de referencia (opcional, €)</label><input id="price" type="number" min="0" step="0.0001" placeholder="No se consulta automáticamente">
+<section id="portfolio" class="hidden"><div class="card"><h2>Posiciones simuladas</h2><div id="holdingList" class="muted">Todavía no tienes posiciones.</div></div><div class="card"><h2>Resumen de cartera</h2><div id="portfolioSummary" class="muted"></div></div></section>
+<section id="trade" class="hidden"><div class="card"><h2>Nueva operación ficticia</h2><p class="muted">Se utiliza el precio indicado para calcular unidades. No se envía ninguna orden al mercado.</p>
+ <label>Activo o ticker</label><input id="asset" placeholder="Ej. ETF global">
+ <div class="grid2"><div><label>Tipo</label><select id="side"><option value="buy">Compra</option><option value="sell">Venta</option></select></div><div><label>Importe en euros</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="5,00"></div></div>
+ <label>Precio por unidad (€)</label><input id="price" type="number" min="0.0001" step="0.0001" placeholder="Obligatorio para calcular unidades">
  <button id="saveTrade">Guardar simulación</button><p id="tradeMsg" class="muted"></p></div></section>
-<section id="report" class="hidden"><div class="card"><h2>Informe de cierre</h2><p class="muted">Genera un resumen cuando termine la sesión. La app no puede ejecutarse en segundo plano ni consultar cotizaciones en directo todavía.</p><button id="makeReport">Generar informe ahora</button><div id="reportSummary" class="item muted">Aún no se ha generado el informe de hoy.</div></div><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><button class="secondary" id="export">Exportar informe CSV</button></div></section>
-<section id="settings" class="hidden"><div class="card"><h2>Preferencias de inversión</h2><label>Perfil inversor</label><select id="profile"><option value="Dinámico">Dinámico: más volatilidad y potencial de crecimiento</option><option value="Equilibrado">Equilibrado</option><option value="Conservador">Conservador</option></select>
-<label>Autonomía</label><select id="autonomy"><option value="Seguimiento simulado; revisión del usuario">Seguimiento de cartera simulada; yo reviso</option><option value="Propone; autorización del usuario">Propone; yo autorizo las operaciones</option></select>
-<label>Momento del informe</label><select id="reportTime"><option value="Al cierre del mercado">Al cierre del mercado</option><option value="Antes de la apertura">Antes de la apertura</option><option value="Dos veces al día">Dos veces al día</option></select>
-<label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="47"><button id="saveSettings">Guardar preferencias</button><p class="muted">Tus preferencias se guardan en este dispositivo. El informe se genera al abrir la app y solicitarlo; esta versión no puede enviar avisos ni operar mientras está cerrada.</p></div>
-<div class="card"><h2>Conexión con Trade Republic</h2><p class="muted">Actualmente no hay una API pública oficial de trading para conectar esta aplicación. La vía segura inicial es exportar los movimientos desde Trade Republic e importarlos o registrarlos manualmente. Nunca compartas tus credenciales con conectores no oficiales.</p></div></section>
-<footer>Herramienta educativa de seguimiento. No es asesoramiento financiero ni ejecuta inversiones reales.</footer>
+<section id="engine" class="hidden"><div class="card"><h2>Gestor automático simulado</h2><p class="muted">El motor de demostración usa una cesta ficticia y precios sintéticos. No representa el mercado real ni genera recomendaciones de inversión.</p>
+ <div class="notice">Antes de ejecutar, revisa que entiendes que esta prueba puede producir ganancias o pérdidas ficticias. Nunca afecta a tu cuenta bancaria.</div>
+ <div class="row"><span class="muted">Presupuesto máximo por decisión</span><b>5,00 €</b></div>
+ <div class="row"><span class="muted">Efectivo disponible</span><b id="engineCash">47,00 €</b></div>
+ <div class="actions"><button id="runEngine">Ejecutar un ciclo de simulación</button><button class="secondary" id="resetDemo">Restablecer cartera de prueba</button></div>
+ <div id="engineResult" class="item muted">Todavía no se ha ejecutado ningún ciclo.</div></div>
+ <div class="card"><h2>Activos de demostración</h2><div id="demoPrices"></div></div></section>
+<section id="report" class="hidden"><div class="card"><h2>Informe de cartera</h2><p class="muted">El informe se genera cuando lo solicitas. Esta versión no funciona en segundo plano ni envía avisos.</p><button id="makeReport">Generar informe ahora</button><div id="reportSummary" class="item muted">Aún no se ha generado el informe.</div></div><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><button class="secondary" id="export">Exportar operaciones CSV</button></div></section>
+<section id="settings" class="hidden"><div class="card"><h2>Preferencias</h2><label>Perfil inversor</label><select id="profile"><option value="Dinámico">Dinámico</option><option value="Equilibrado">Equilibrado</option><option value="Conservador">Conservador</option></select>
+ <label>Momento del informe</label><select id="reportTime"><option value="Al cierre del mercado">Al cierre del mercado</option><option value="Antes de la apertura">Antes de la apertura</option><option value="Dos veces al día">Dos veces al día</option></select>
+ <label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="47"><button id="saveSettings">Guardar preferencias</button><p class="muted">Los datos se guardan en este navegador. Borrar los datos del navegador puede eliminar la cartera.</p></div>
+ <div class="card"><h2>Trade Republic</h2><p class="muted">No existe conexión configurada. No introduzcas credenciales. Para seguimiento, utiliza extractos descargados desde los canales oficiales y registra los datos manualmente.</p></div></section>
+<footer>Herramienta educativa. No es asesoramiento financiero y no ejecuta inversiones reales.</footer>
 </main>
 <script>
-const euro=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n||0);
-let data=JSON.parse(localStorage.getItem('invIA')||'null')||{initial:47,cash:47,trades:[],holdings:{}};
-data.preferences=data.preferences||{profile:'Dinámico',autonomy:'Seguimiento simulado; revisión del usuario',reportTime:'Al cierre del mercado'};
-function save(){localStorage.setItem('invIA',JSON.stringify(data));render()}
+const KEY='invIA';
+const euro=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(Number(n)||0);
+const round=n=>Math.round((Number(n)+Number.EPSILON)*100)/100;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fresh(){return {version:2,initial:47,cash:47,trades:[],holdings:{},preferences:{profile:'Dinámico',reportTime:'Al cierre del mercado'},reports:[],demo:{cycle:0}}}
+function load(){
+ let raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+ let d=raw&&typeof raw==='object'?raw:fresh();
+ d.initial=Number.isFinite(Number(d.initial))?Number(d.initial):47;
+ d.cash=Number.isFinite(Number(d.cash))?Number(d.cash):d.initial;
+ d.trades=Array.isArray(d.trades)?d.trades:[];
+ d.holdings=d.holdings&&typeof d.holdings==='object'?d.holdings:{};
+ d.preferences={...fresh().preferences,...(d.preferences||{})};
+ d.reports=Array.isArray(d.reports)?d.reports:[];
+ d.demo={cycle:0,...(d.demo||{})};
+ // Conserva los importes/unidades existentes; añade campos de valoración para la nueva versión.
+ for(const h of Object.values(d.holdings)){h.cost=Number(h.cost)||0;h.units=Number(h.units)||0;h.lastPrice=Number(h.lastPrice)||0;}
+ d.version=2;return d;
+}
+let data=load();
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
 function showTab(id){document.querySelectorAll('main section[id]').forEach(s=>s.classList.toggle('hidden',s.id!==id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id))}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function holdingsValue(){return Object.values(data.holdings).reduce((sum,h)=>sum+(h.lastPrice>0?h.units*h.lastPrice:h.cost),0)}
+function investedCost(){return Object.values(data.holdings).reduce((sum,h)=>sum+h.cost,0)}
 function render(){
- let invested=Object.values(data.holdings).reduce((a,h)=>a+h.cost,0),total=data.cash+invested;
+ const value=holdingsValue(),total=data.cash+value,pnl=total-data.initial;
  document.getElementById('total').textContent=euro(total);document.getElementById('cash').textContent=euro(data.cash);
- document.getElementById('initial').textContent=euro(data.initial);document.getElementById('pnl').textContent=euro(total-data.initial);
+ document.getElementById('initial').textContent=euro(data.initial);document.getElementById('pnl').textContent=euro(pnl);
+ document.getElementById('pnl').className=pnl<0?'red':'green';
  document.getElementById('positions').textContent=Object.keys(data.holdings).length;
- let hs=Object.entries(data.holdings);document.getElementById('holdingList').innerHTML=hs.length?hs.map(([k,h])=>`<div class="item row"><span>${esc(k)}<br><small class="muted">${h.units.toFixed(4)} unidades simuladas</small></span><b>${euro(h.cost)}</b></div>`).join(''):'Todavía no tienes posiciones.';
- document.getElementById('activity').innerHTML=data.trades.length?data.trades.slice().reverse().map(t=>`<div class="item"><div class="row"><b>${esc(t.side==='buy'?'Compra simulada':'Venta simulada')} · ${esc(t.asset)}</b><b>${euro(t.amount)}</b></div><small class="muted">${new Date(t.date).toLocaleString('es-ES')} · Precio de referencia: ${t.price?euro(t.price):'no indicado'}</small></div>`).join(''):'Sin movimientos todavía.';
- document.getElementById('startCapital').value=data.initial;
- document.getElementById('profile').value=data.preferences.profile;
- document.getElementById('autonomy').value=data.preferences.autonomy;
- document.getElementById('reportTime').value=data.preferences.reportTime;
- document.getElementById('profileLabel').textContent=data.preferences.profile;
- document.getElementById('autonomyLabel').textContent=data.preferences.autonomy.startsWith('Seguimiento')?'Seguimiento simulado':'Propuestas con autorización';
- document.getElementById('reportLabel').textContent=data.preferences.reportTime;
- document.getElementById('strategyText').textContent=data.preferences.profile==='Dinámico'?'Busca crecimiento aceptando volatilidad; sin derivados ni apalancamiento.':'Perfil '+data.preferences.profile+'. Sin derivados ni apalancamiento.';
+ const entries=Object.entries(data.holdings);
+ document.getElementById('holdingList').innerHTML=entries.length?entries.map(([name,h])=>{const mv=h.units*(h.lastPrice||0),basis=h.cost,pl=h.lastPrice>0?mv-basis:0;return `<div class="item"><div class="row"><b>${esc(name)}</b><b>${euro(h.lastPrice>0?mv:basis)}</b></div><small class="muted">${h.units.toFixed(5)} unidades · coste ${euro(basis)} · ${h.lastPrice>0?'precio '+euro(h.lastPrice):'sin precio actualizado'}</small>${h.lastPrice>0?`<div class="${pl<0?'red':'green'}">Resultado no realizado: ${euro(pl)}</div>`:''}</div>`}).join(''):'Todavía no tienes posiciones.';
+ document.getElementById('activity').innerHTML=data.trades.length?data.trades.slice().reverse().map(t=>`<div class="item"><div class="row"><b>${esc(t.side==='buy'?'Compra':'Venta')} · ${esc(t.asset)}</b><b>${euro(t.amount)}</b></div><small class="muted">${new Date(t.date).toLocaleString('es-ES')} · ${t.price>0?'precio '+euro(t.price):'precio no indicado'} · ${Number(t.units||0).toFixed(5)} unidades</small></div>`).join(''):'Sin movimientos todavía.';
+ document.getElementById('portfolioSummary').textContent=`Coste de compra: ${euro(investedCost())} · Valor estimado: ${euro(value)} · Efectivo: ${euro(data.cash)}. Las posiciones sin precio actualizado se muestran a coste.`;
+ document.getElementById('startCapital').value=data.initial;document.getElementById('profile').value=data.preferences.profile;document.getElementById('reportTime').value=data.preferences.reportTime;
+ document.getElementById('profileLabel').textContent=data.preferences.profile;document.getElementById('reportLabel').textContent=data.preferences.reportTime;
+ document.getElementById('engineCash').textContent=euro(data.cash);
+ renderDemo();
 }
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function recordTrade(asset,side,amount,price,source='manual'){
+ amount=round(amount);price=Number(price);
+ if(!asset||!Number.isFinite(amount)||amount<=0||!Number.isFinite(price)||price<=0)throw Error('Activo, importe y precio deben ser válidos.');
+ const key=asset.trim().toUpperCase(),units=amount/price;
+ if(side==='buy'){
+  if(amount>data.cash+0.000001)throw Error('Efectivo simulado insuficiente.');
+  const h=data.holdings[key]||{units:0,cost:0,lastPrice:price};
+  h.units+=units;h.cost=round(h.cost+amount);h.lastPrice=price;data.holdings[key]=h;data.cash=round(data.cash-amount);
+ }else{
+  const h=data.holdings[key];if(!h||units>h.units+0.00000001)throw Error('No tienes suficientes unidades para vender.');
+  const soldCost=h.cost*(units/h.units);h.units-=units;h.cost=round(h.cost-soldCost);h.lastPrice=price;data.cash=round(data.cash+amount);
+  if(h.units<0.00000001||h.cost<0.005)delete data.holdings[key];
+ }
+ data.trades.push({asset:key,side,amount,price,units,date:new Date().toISOString(),source});
+}
 document.getElementById('saveTrade').onclick=()=>{
- let asset=document.getElementById('asset').value.trim(),side=document.getElementById('side').value,amount=Number(document.getElementById('amount').value),price=Number(document.getElementById('price').value)||0,msg=document.getElementById('tradeMsg');
- if(!asset||!Number.isFinite(amount)||amount<=0){msg.textContent='Introduce un activo y un importe válido.';return}
- if(side==='buy'&&amount>data.cash){msg.textContent='No hay suficiente efectivo simulado.';return}
- if(side==='sell'&&(!data.holdings[asset]||amount>data.holdings[asset].cost)){msg.textContent='No tienes suficiente posición simulada para vender ese importe.';return}
- if(side==='buy'){data.cash-=amount;let h=data.holdings[asset]||{units:0,cost:0};h.cost+=amount;h.units+=price?amount/price:amount;data.holdings[asset]=h}
- else{data.cash+=amount;let h=data.holdings[asset];let ratio=amount/h.cost;h.cost-=amount;h.units*=1-ratio;if(h.cost<.005)delete data.holdings[asset]}
- data.trades.push({asset,side,amount,price,date:new Date().toISOString()});save();msg.textContent='Simulación guardada en este dispositivo.';document.getElementById('asset').value='';document.getElementById('amount').value='';document.getElementById('price').value='';
+ const msg=document.getElementById('tradeMsg');
+ try{recordTrade(document.getElementById('asset').value,document.getElementById('side').value,Number(document.getElementById('amount').value),Number(document.getElementById('price').value));save();msg.textContent='Operación simulada guardada correctamente.';document.getElementById('asset').value='';document.getElementById('amount').value='';document.getElementById('price').value='';}
+ catch(e){msg.textContent=e.message;}
 };
-document.getElementById('saveSettings').onclick=()=>{let n=Number(document.getElementById('startCapital').value);if(n>=0&&Number.isFinite(n)){data.initial=n;data.cash=n-Object.values(data.holdings).reduce((a,h)=>a+h.cost,0);if(data.cash<0){alert('El capital no puede ser inferior al importe simulado ya invertido.');data.cash=0;return}data.preferences={profile:document.getElementById('profile').value,autonomy:document.getElementById('autonomy').value,reportTime:document.getElementById('reportTime').value};save();alert('Preferencias guardadas en este dispositivo.')}};
-document.getElementById('makeReport').onclick=()=>{let invested=Object.values(data.holdings).reduce((a,h)=>a+h.cost,0),total=data.cash+invested,pnl=total-data.initial;let date=new Date().toLocaleString('es-ES');document.getElementById('reportSummary').innerHTML='<b>Informe generado: '+esc(date)+'</b><br>Capital simulado: '+euro(total)+'<br>Efectivo: '+euro(data.cash)+'<br>Posiciones: '+Object.keys(data.holdings).length+'<br>Operaciones registradas: '+data.trades.length+'<br>Resultado frente al capital inicial: '+euro(pnl)+'<br><br><span class="muted">Sin cotizaciones de mercado conectadas: no se puede calcular rentabilidad diaria real ni recomendar una operación basada en precios actuales.</span>';};
-document.getElementById('export').onclick=()=>{let rows=[['fecha','activo','tipo','importe_eur','precio_referencia'],...data.trades.map(t=>[t.date,t.asset,t.side,t.amount,t.price])];let csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='informe-inversor-ia.csv';a.click();URL.revokeObjectURL(a.href)};
+// Cotizaciones sintéticas claramente identificadas: solo sirven para probar el flujo del simulador.
+const demoAssets=[{ticker:'DEMO-ETF',name:'ETF global de demostración',base:100,drift:.001},{ticker:'DEMO-TEC',name:'Tecnología de demostración',base:50,drift:.0015},{ticker:'DEMO-BON',name:'Bonos de demostración',base:25,drift:.0003}];
+function demoPrice(asset,cycle){const wave=Math.sin(cycle*1.7+asset.base)*.018+Math.cos(cycle*.63+asset.base)*.009;return round(asset.base*(1+asset.drift*cycle+wave));}
+function renderDemo(){document.getElementById('demoPrices').innerHTML=demoAssets.map(a=>`<div class="item row"><span><b>${a.ticker}</b><br><small class="muted">${a.name}</small></span><b>${euro(demoPrice(a,data.demo.cycle))}</b></div>`).join('');}
+document.getElementById('runEngine').onclick=()=>{
+ const out=document.getElementById('engineResult');data.demo.cycle++;
+ // Estrategia didáctica determinista: solo realiza una pequeña compra ficticia si hay efectivo suficiente.
+ const cycle=data.demo.cycle,asset=demoAssets[cycle%demoAssets.length],price=demoPrice(asset,cycle),amount=Math.min(5,data.cash);
+ if(amount>=1){try{recordTrade(asset.ticker,'buy',amount,price,'motor-demo');save();out.innerHTML=`<b>Ciclo ${cycle}: compra simulada de ${euro(amount)} en ${asset.ticker}.</b><br>Precio sintético: ${euro(price)}. Esta decisión es una prueba técnica, no una señal basada en mercado real.`;}catch(e){out.textContent=e.message;}}
+ else{save();out.textContent='El motor no ha comprado: el efectivo disponible es inferior a 1 €. No se ha utilizado crédito.';}
+ document.getElementById('daily').textContent=`Último ciclo de demostración: ${new Date().toLocaleString('es-ES')}. Precios sintéticos, no cotizaciones reales.`;
+};
+document.getElementById('resetDemo').onclick=()=>{
+ if(!confirm('Esto borrará las operaciones y posiciones simuladas de este navegador y restaurará los 47 €. ¿Continuar?'))return;
+ data=fresh();save();document.getElementById('engineResult').textContent='Cartera de demostración restablecida.';
+};
+document.getElementById('saveSettings').onclick=()=>{
+ const n=Number(document.getElementById('startCapital').value);
+ if(!Number.isFinite(n)||n<0){alert('Introduce un capital válido.');return;}
+ const currentInvested=investedCost();if(n<currentInvested){alert('El capital no puede ser inferior al coste de las posiciones abiertas.');return;}
+ data.initial=round(n);data.cash=round(n-currentInvested);
+ data.preferences={profile:document.getElementById('profile').value,reportTime:document.getElementById('reportTime').value};save();alert('Preferencias guardadas.');
+};
+document.getElementById('makeReport').onclick=()=>{
+ const value=holdingsValue(),total=data.cash+value,pnl=total-data.initial;
+ const report={date:new Date().toISOString(),total,cash:data.cash,pnl,positions:Object.keys(data.holdings).length,trades:data.trades.length};
+ data.reports.push(report);localStorage.setItem(KEY,JSON.stringify(data));
+ document.getElementById('reportSummary').innerHTML=`<b>Informe: ${new Date(report.date).toLocaleString('es-ES')}</b><br>Capital inicial: ${euro(data.initial)}<br>Valor estimado: ${euro(total)}<br>Efectivo: ${euro(data.cash)}<br>Resultado simulado: ${euro(pnl)}<br>Posiciones: ${report.positions}<br>Operaciones acumuladas: ${report.trades}<br><small class="muted">Los activos demo usan precios sintéticos. No equivale a rentabilidad de mercado.</small>`;
+};
+document.getElementById('export').onclick=()=>{
+ const rows=[['fecha','activo','tipo','importe_eur','precio_eur','unidades','origen'],...data.trades.map(t=>[t.date,t.asset,t.side,t.amount,t.price,t.units,t.source||'manual'])];
+ const csv=rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(';')).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='informe-inversor-ia.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
 render();
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script></body></html>
