@@ -58,6 +58,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
  <label>Activo o ticker</label><input id="asset" placeholder="Ej. ETF global">
  <div class="grid2"><div><label>Tipo</label><select id="side"><option value="buy">Compra</option><option value="sell">Venta</option></select></div><div><label>Importe en euros</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="5,00"></div></div>
  <label>Precio por unidad (€)</label><input id="price" type="number" min="0.0001" step="0.0001" placeholder="Obligatorio para calcular unidades">
+ <label>Fecha de la operación</label><input id="tradeDate" type="date">
  <button id="saveTrade">Guardar simulación</button><p id="tradeMsg" class="muted"></p></div></section>
 <section id="engine" class="hidden"><div class="card"><h2>Gestor automático simulado</h2><p class="muted">El motor de demostración usa una cesta ficticia y precios sintéticos. No representa el mercado real ni genera recomendaciones de inversión.</p>
  <div class="notice">Antes de ejecutar, revisa que entiendes que esta prueba puede producir ganancias o pérdidas ficticias. Nunca afecta a tu cuenta bancaria.</div>
@@ -66,11 +67,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
  <div class="actions"><button id="runEngine">Ejecutar un ciclo de simulación</button><button class="secondary" id="resetDemo">Restablecer cartera de prueba</button></div>
  <div id="engineResult" class="item muted">Todavía no se ha ejecutado ningún ciclo.</div></div>
  <div class="card"><h2>Activos de demostración</h2><div id="demoPrices"></div></div></section>
-<section id="report" class="hidden"><div class="card"><h2>Informe de cartera</h2><p class="muted">El informe se genera cuando lo solicitas. Esta versión no funciona en segundo plano ni envía avisos.</p><button id="makeReport">Generar informe ahora</button><div id="reportSummary" class="item muted">Aún no se ha generado el informe.</div></div><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><button class="secondary" id="export">Exportar operaciones CSV</button></div></section>
+<section id="report" class="hidden"><div class="card"><h2>Informe de cartera</h2><p class="muted">El informe se genera cuando lo solicitas. Esta versión no funciona en segundo plano ni envía avisos.</p><button id="makeReport">Generar informe ahora</button><div id="reportSummary" class="item muted">Aún no se ha generado el informe.</div></div><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><div class="actions"><button class="secondary" id="export">Exportar operaciones CSV</button><button class="secondary" id="backupAll">Copia completa JSON</button></div></div></section>
 <section id="settings" class="hidden"><div class="card"><h2>Preferencias</h2><label>Perfil inversor</label><select id="profile"><option value="Dinámico">Dinámico</option><option value="Equilibrado">Equilibrado</option><option value="Conservador">Conservador</option></select>
  <label>Momento del informe</label><select id="reportTime"><option value="Al cierre del mercado">Al cierre del mercado</option><option value="Antes de la apertura">Antes de la apertura</option><option value="Dos veces al día">Dos veces al día</option></select>
  <label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="47"><button id="saveSettings">Guardar preferencias</button><p class="muted">Los datos se guardan en este navegador. Borrar los datos del navegador puede eliminar la cartera.</p></div>
- <div class="card"><h2>Trade Republic</h2><p class="muted">No existe conexión configurada. No introduzcas credenciales. Para seguimiento, utiliza extractos descargados desde los canales oficiales y registra los datos manualmente.</p></div></section>
+ <div class="card"><h2>Copia de seguridad completa</h2><p class="muted">Guarda o recupera cartera, efectivo, posiciones, operaciones, preferencias e informes. Importar sustituye los datos actuales de este navegador.</p><div class="actions"><button class="secondary" id="backupSettings">Descargar copia completa</button><label class="btn" for="restoreFile">Restaurar copia JSON</label><input id="restoreFile" type="file" accept=".json,application/json" style="display:none"></div><p id="backupMsg" class="muted"></p></div><div class="card"><h2>Trade Republic</h2><p class="muted">No existe conexión configurada. No introduzcas credenciales. Para seguimiento, utiliza extractos descargados desde los canales oficiales y registra los datos manualmente.</p></div></section>
 <footer>Herramienta educativa. No es asesoramiento financiero y no ejecuta inversiones reales.</footer>
 </main>
 <script>
@@ -107,14 +108,14 @@ function render(){
  document.getElementById('positions').textContent=Object.keys(data.holdings).length;
  const entries=Object.entries(data.holdings);
  document.getElementById('holdingList').innerHTML=entries.length?entries.map(([name,h])=>{const mv=h.units*(h.lastPrice||0),basis=h.cost,pl=h.lastPrice>0?mv-basis:0;return `<div class="item"><div class="row"><b>${esc(name)}</b><b>${euro(h.lastPrice>0?mv:basis)}</b></div><small class="muted">${h.units.toFixed(5)} unidades · coste ${euro(basis)} · ${h.lastPrice>0?'precio '+euro(h.lastPrice):'sin precio actualizado'}</small>${h.lastPrice>0?`<div class="${pl<0?'red':'green'}">Resultado no realizado: ${euro(pl)}</div>`:''}</div>`}).join(''):'Todavía no tienes posiciones.';
- document.getElementById('activity').innerHTML=data.trades.length?data.trades.slice().reverse().map(t=>`<div class="item"><div class="row"><b>${esc(t.side==='buy'?'Compra':'Venta')} · ${esc(t.asset)}</b><b>${euro(t.amount)}</b></div><small class="muted">${new Date(t.date).toLocaleString('es-ES')} · ${t.price>0?'precio '+euro(t.price):'precio no indicado'} · ${Number(t.units||0).toFixed(5)} unidades</small></div>`).join(''):'Sin movimientos todavía.';
+ document.getElementById('activity').innerHTML=data.trades.length?data.trades.slice().reverse().map(t=>`<div class="item"><div class="row"><b>${esc(t.side==='buy'?'Compra':'Venta')} · ${esc(t.asset)}</b><b>${euro(t.amount)}</b></div><small class="muted">${new Date(t.date).toLocaleString('es-ES')} · ${t.price>0?'precio '+euro(t.price):'<b class=\"red\">INCOMPLETA: falta precio</b>'} · ${Number(t.units||0).toFixed(5)} unidades</small></div>`).join(''):'Sin movimientos todavía.';
  document.getElementById('portfolioSummary').textContent=`Coste de compra: ${euro(investedCost())} · Valor estimado: ${euro(value)} · Efectivo: ${euro(data.cash)}. Las posiciones sin precio actualizado se muestran a coste.`;
  document.getElementById('startCapital').value=data.initial;document.getElementById('profile').value=data.preferences.profile;document.getElementById('reportTime').value=data.preferences.reportTime;
  document.getElementById('profileLabel').textContent=data.preferences.profile;document.getElementById('reportLabel').textContent=data.preferences.reportTime;
  document.getElementById('engineCash').textContent=euro(data.cash);
  renderDemo();
 }
-function recordTrade(asset,side,amount,price,source='manual'){
+function recordTrade(asset,side,amount,price,source='manual',tradeDate=null){
  amount=round(amount);price=Number(price);
  if(!asset||!Number.isFinite(amount)||amount<=0||!Number.isFinite(price)||price<=0)throw Error('Activo, importe y precio deben ser válidos.');
  const key=asset.trim().toUpperCase(),units=amount/price;
@@ -127,11 +128,12 @@ function recordTrade(asset,side,amount,price,source='manual'){
   const soldCost=h.cost*(units/h.units);h.units-=units;h.cost=round(h.cost-soldCost);h.lastPrice=price;data.cash=round(data.cash+amount);
   if(h.units<0.00000001||h.cost<0.005)delete data.holdings[key];
  }
- data.trades.push({asset:key,side,amount,price,units,date:new Date().toISOString(),source});
+ data.trades.push({asset:key,side,amount,price,units,date:tradeDate?new Date(tradeDate+'T12:00:00').toISOString():new Date().toISOString(),source});
 }
+document.getElementById('tradeDate').value=new Date().toISOString().slice(0,10);
 document.getElementById('saveTrade').onclick=()=>{
  const msg=document.getElementById('tradeMsg');
- try{recordTrade(document.getElementById('asset').value,document.getElementById('side').value,Number(document.getElementById('amount').value),Number(document.getElementById('price').value));save();msg.textContent='Operación simulada guardada correctamente.';document.getElementById('asset').value='';document.getElementById('amount').value='';document.getElementById('price').value='';}
+ try{recordTrade(document.getElementById('asset').value,document.getElementById('side').value,Number(document.getElementById('amount').value),Number(document.getElementById('price').value),'manual',document.getElementById('tradeDate').value);save();msg.textContent='Operación simulada guardada correctamente.';document.getElementById('asset').value='';document.getElementById('amount').value='';document.getElementById('price').value='';document.getElementById('tradeDate').value=new Date().toISOString().slice(0,10);}
  catch(e){msg.textContent=e.message;}
 };
 // Cotizaciones sintéticas claramente identificadas: solo sirven para probar el flujo del simulador.
@@ -167,6 +169,23 @@ document.getElementById('export').onclick=()=>{
  const rows=[['fecha','activo','tipo','importe_eur','precio_eur','unidades','origen'],...data.trades.map(t=>[t.date,t.asset,t.side,t.amount,t.price,t.units,t.source||'manual'])];
  const csv=rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(';')).join('\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='informe-inversor-ia.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+function downloadJson(){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='copia-cartera-inversor-ia.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+document.getElementById('backupAll').onclick=downloadJson;
+document.getElementById('backupSettings').onclick=downloadJson;
+document.getElementById('restoreFile').onchange=async e=>{
+ const file=e.target.files&&e.target.files[0];if(!file)return;
+ const msg=document.getElementById('backupMsg');
+ try{
+  const imported=JSON.parse(await file.text());
+  if(!imported||typeof imported!=='object'||!Array.isArray(imported.trades)||!imported.holdings||typeof imported.holdings!=='object'||!Number.isFinite(Number(imported.cash))||!Number.isFinite(Number(imported.initial)))throw Error('El archivo no parece una copia válida de Inversor IA.');
+  if(!confirm('Vas a sustituir la cartera actual por la copia seleccionada. ¿Continuar?')){e.target.value='';return;}
+  data=imported;data.preferences={...fresh().preferences,...(data.preferences||{})};data.reports=Array.isArray(data.reports)?data.reports:[];data.demo={cycle:0,...(data.demo||{})};save();msg.textContent='Copia restaurada correctamente.';
+ }catch(err){msg.textContent='No se pudo restaurar: '+err.message;}
+ e.target.value='';
 };
 render();
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
