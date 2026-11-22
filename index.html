@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10251f"><meta name="description" content="Panel personal de seguimiento y simulación de inversiones.">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg"><title>Inversor IA</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1512;--panel:#13231d;--panel2:#1b3028;--text:#f1f7f3;--muted:#a8b9af;--green:#8fe0ad;--line:#294238;--amber:#f4c66b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:760px;margin:auto;padding:22px 16px 40px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.3px}.logo{width:42px;height:42px;border-radius:13px;background:#244b39;display:grid;place-items:center;color:var(--green);font-size:22px}
+.tag{font-size:12px;color:var(--amber);border:1px solid #715b2e;padding:5px 9px;border-radius:30px}
+h1{font-size:27px;margin:4px 0}h2{font-size:17px;margin:0 0 12px}.muted{color:var(--muted);font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:17px;margin:13px 0}
+.balance{font-size:36px;font-weight:800;letter-spacing:-1px;margin:5px 0}.green{color:var(--green)}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:var(--panel2);padding:13px;border-radius:13px}.stat b{display:block;font-size:19px;margin-top:5px}
+nav{display:flex;gap:8px;overflow:auto;margin:17px 0}nav button{white-space:nowrap;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 14px;border-radius:30px}
+nav button.active{background:#28533d;border-color:#427d5d}
+button,.btn{cursor:pointer;border:0;border-radius:12px;padding:12px 15px;background:#8fe0ad;color:#092016;font-weight:750}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+input,select,textarea{width:100%;background:#0c1914;color:var(--text);border:1px solid var(--line);padding:12px;border-radius:11px;font:inherit;margin:6px 0 12px}
+label{font-size:13px;color:var(--muted)}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.notice{background:#342b17;border:1px solid #6e592d;color:#f6dda1;border-radius:13px;padding:12px;font-size:13px;line-height:1.5}
+.item{padding:11px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
+.hidden{display:none}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
+@media(min-width:600px){main{padding-top:34px}.balance{font-size:44px}}
+</style></head>
+<body><main>
+<header class="top"><div class="brand"><div class="logo">↗</div><div>INVERSOR IA<div class="muted">Tu panel de inversión</div></div></div><span class="tag">MODO SIMULACIÓN</span></header>
+<section class="card">
+ <div class="muted">Valor de cartera simulado</div><div class="balance" id="total">47,00 €</div>
+ <div class="row"><span class="muted">Efectivo disponible</span><b id="cash">47,00 €</b></div>
+ <div class="row"><span class="muted">Resultado simulado</span><b id="pnl" class="green">0,00 €</b></div>
+</section>
+<div class="stats">
+ <div class="stat"><span class="muted">Capital inicial</span><b id="initial">47,00 €</b></div>
+ <div class="stat"><span class="muted">Posiciones abiertas</span><b id="positions">0</b></div>
+</div>
+<nav><button class="active" data-tab="home">Inicio</button><button data-tab="portfolio">Cartera</button><button data-tab="trade">Simular operación</button><button data-tab="report">Informe</button><button data-tab="settings">Ajustes</button></nav>
+<section id="home">
+ <div class="card"><h2>Resumen de hoy</h2><p id="daily" class="muted">Todavía no hay datos de mercado conectados. Esta versión registra simulaciones y movimientos que introduzcas tú.</p>
+ <div class="notice">Esta aplicación no está conectada a Trade Republic, no recibe cotizaciones en directo y no envía órdenes. No introduzcas aquí tu contraseña, PIN ni códigos de verificación.</div></div>
+ <div class="card"><h2>Tu siguiente paso</h2><p class="muted">Practica con operaciones ficticias y registra tus movimientos reales manualmente desde el extracto de tu broker. Así podrás revisar la estrategia sin dar acceso a tu cuenta.</p>
+ <button onclick="showTab('trade')">Probar una operación simulada</button></div>
+</section>
+<section id="portfolio" class="hidden"><div class="card"><h2>Posiciones simuladas</h2><div id="holdingList" class="muted">Todavía no tienes posiciones.</div></div></section>
+<section id="trade" class="hidden"><div class="card"><h2>Nueva operación ficticia</h2><p class="muted">No se envía ninguna orden al mercado.</p>
+ <label>Activo (nombre o ticker)</label><input id="asset" placeholder="Ej. ETF global (solo simulación)">
+ <div class="row"><div style="flex:1"><label>Tipo</label><select id="side"><option value="buy">Compra</option><option value="sell">Venta</option></select></div><div style="flex:1"><label>Importe en euros</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="5,00"></div></div>
+ <label>Precio de referencia (opcional, €)</label><input id="price" type="number" min="0" step="0.0001" placeholder="No se consulta automáticamente">
+ <button id="saveTrade">Guardar simulación</button><p id="tradeMsg" class="muted"></p></div></section>
+<section id="report" class="hidden"><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><button class="secondary" id="export">Exportar informe CSV</button></div></section>
+<section id="settings" class="hidden"><div class="card"><h2>Configuración</h2><label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="47"><button id="saveSettings">Guardar capital</button><p class="muted">Los datos se guardan únicamente en este dispositivo mediante almacenamiento local del navegador.</p></div>
+<div class="card"><h2>Conexión con Trade Republic</h2><p class="muted">Actualmente no hay una API pública oficial de trading para conectar esta aplicación. La vía segura inicial es exportar los movimientos desde Trade Republic e importarlos o registrarlos manualmente. Nunca compartas tus credenciales con conectores no oficiales.</p></div></section>
+<footer>Herramienta educativa de seguimiento. No es asesoramiento financiero ni ejecuta inversiones reales.</footer>
+</main>
+<script>
+const euro=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n||0);
+let data=JSON.parse(localStorage.getItem('invIA')||'null')||{initial:47,cash:47,trades:[],holdings:{}};
+function save(){localStorage.setItem('invIA',JSON.stringify(data));render()}
+function showTab(id){document.querySelectorAll('main section[id]').forEach(s=>s.classList.toggle('hidden',s.id!==id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id))}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+function render(){
+ let invested=Object.values(data.holdings).reduce((a,h)=>a+h.cost,0),total=data.cash+invested;
+ document.getElementById('total').textContent=euro(total);document.getElementById('cash').textContent=euro(data.cash);
+ document.getElementById('initial').textContent=euro(data.initial);document.getElementById('pnl').textContent=euro(total-data.initial);
+ document.getElementById('positions').textContent=Object.keys(data.holdings).length;
+ let hs=Object.entries(data.holdings);document.getElementById('holdingList').innerHTML=hs.length?hs.map(([k,h])=>`<div class="item row"><span>${esc(k)}<br><small class="muted">${h.units.toFixed(4)} unidades simuladas</small></span><b>${euro(h.cost)}</b></div>`).join(''):'Todavía no tienes posiciones.';
+ document.getElementById('activity').innerHTML=data.trades.length?data.trades.slice().reverse().map(t=>`<div class="item"><div class="row"><b>${esc(t.side==='buy'?'Compra simulada':'Venta simulada')} · ${esc(t.asset)}</b><b>${euro(t.amount)}</b></div><small class="muted">${new Date(t.date).toLocaleString('es-ES')} · Precio de referencia: ${t.price?euro(t.price):'no indicado'}</small></div>`).join(''):'Sin movimientos todavía.';
+ document.getElementById('startCapital').value=data.initial;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+document.getElementById('saveTrade').onclick=()=>{
+ let asset=document.getElementById('asset').value.trim(),side=document.getElementById('side').value,amount=Number(document.getElementById('amount').value),price=Number(document.getElementById('price').value)||0,msg=document.getElementById('tradeMsg');
+ if(!asset||!Number.isFinite(amount)||amount<=0){msg.textContent='Introduce un activo y un importe válido.';return}
+ if(side==='buy'&&amount>data.cash){msg.textContent='No hay suficiente efectivo simulado.';return}
+ if(side==='sell'&&(!data.holdings[asset]||amount>data.holdings[asset].cost)){msg.textContent='No tienes suficiente posición simulada para vender ese importe.';return}
+ if(side==='buy'){data.cash-=amount;let h=data.holdings[asset]||{units:0,cost:0};h.cost+=amount;h.units+=price?amount/price:amount;data.holdings[asset]=h}
+ else{data.cash+=amount;let h=data.holdings[asset];let ratio=amount/h.cost;h.cost-=amount;h.units*=1-ratio;if(h.cost<.005)delete data.holdings[asset]}
+ data.trades.push({asset,side,amount,price,date:new Date().toISOString()});save();msg.textContent='Simulación guardada en este dispositivo.';document.getElementById('asset').value='';document.getElementById('amount').value='';document.getElementById('price').value='';
+};
+document.getElementById('saveSettings').onclick=()=>{let n=Number(document.getElementById('startCapital').value);if(n>=0&&Number.isFinite(n)){data.initial=n;data.cash=n-Object.values(data.holdings).reduce((a,h)=>a+h.cost,0);if(data.cash<0){alert('El capital no puede ser inferior al importe simulado ya invertido.');data.cash=0;return}save()}};
+document.getElementById('export').onclick=()=>{let rows=[['fecha','activo','tipo','importe_eur','precio_referencia'],...data.trades.map(t=>[t.date,t.asset,t.side,t.amount,t.price])];let csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='informe-inversor-ia.csv';a.click();URL.revokeObjectURL(a.href)};
+render();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+</script></body></html>

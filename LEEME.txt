@@ -1,0 +1,32 @@
+INVERSOR IA — primera versión instalable (PWA)
+
+QUÉ HACE
+- Panel móvil y ordenador.
+- Registra operaciones FICTICIAS.
+- Lleva efectivo/posiciones simuladas.
+- Guarda los datos localmente en el navegador.
+- Exporta un CSV de actividad.
+
+QUÉ NO HACE
+- No está conectado a Trade Republic.
+- No recibe cotizaciones ni noticias en directo.
+- No recomienda activos con datos de mercado reales.
+- No ejecuta compras ni ventas reales.
+- No garantiza que el capital no pueda perderse.
+- No introduzcas contraseña, PIN ni códigos de Trade Republic.
+
+INSTALACIÓN
+La PWA debe publicarse en un alojamiento HTTPS para instalarse:
+1. Sube el contenido de esta carpeta a un repositorio GitHub.
+2. En GitHub, abre Settings > Pages.
+3. Selecciona Deploy from a branch, rama main y carpeta /(root).
+4. Espera a que GitHub Pages publique la web.
+5. Abre la URL https://TU-USUARIO.github.io/TU-REPOSITORIO/ en Chrome Android.
+6. Menú ⋮ > Instalar aplicación (o Añadir a pantalla de inicio).
+   En iPhone: Safari > Compartir > Añadir a pantalla de inicio.
+
+CONEXIÓN CON TRADE REPUBLIC
+A fecha de noviembre de 2026 no se ha encontrado API pública oficial para que una app particular opere la cuenta. Las bibliotecas comunitarias usan interfaces privadas/no documentadas y pueden incumplir condiciones, fallar o exponer credenciales. Esta versión no solicita credenciales. Se puede empezar importando/consultando extractos manualmente, sin dar acceso a la cuenta.
+
+SIGUIENTE FASE
+Para datos de mercado reales: integrar un proveedor de cotizaciones con licencia/condiciones adecuadas y un backend seguro. Para órdenes reales: solo avanzar si Trade Republic ofrece un canal autorizado y verificable. No habilitar derivados ni apalancamiento para esta primera fase.
