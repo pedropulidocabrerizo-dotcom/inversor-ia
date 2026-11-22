@@ -41,7 +41,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
 <nav><button class="active" data-tab="home">Inicio</button><button data-tab="portfolio">Cartera</button><button data-tab="trade">Simular operación</button><button data-tab="report">Informe</button><button data-tab="settings">Ajustes</button></nav>
 <section id="home">
  <div class="card"><h2>Resumen de hoy</h2><p id="daily" class="muted">Todavía no hay datos de mercado conectados. Esta versión registra simulaciones y movimientos que introduzcas tú.</p>
- <div class="notice">Esta aplicación no está conectada a Trade Republic, no recibe cotizaciones en directo y no envía órdenes. No introduzcas aquí tu contraseña, PIN ni códigos de verificación.</div></div>
+ <div class="notice">Esta aplicación no está conectada a Trade Republic, no recibe cotizaciones en directo y no envía órdenes. No introduzcas aquí tu contraseña, PIN ni códigos de verificación.</div>
+ <div class="card" style="margin:14px 0 0;background:#182b23"><h2>Tu estrategia activa</h2><div class="row"><span class="muted">Perfil</span><b id="profileLabel">Dinámico</b></div><div class="row"><span class="muted">Gestión</span><b id="autonomyLabel">Cartera simulada automática</b></div><div class="row"><span class="muted">Informe</span><b id="reportLabel">Al cierre del mercado</b></div><p class="muted" id="strategyText">Simulación educativa. Sin derivados, apalancamiento ni órdenes reales.</p></div></div>
  <div class="card"><h2>Tu siguiente paso</h2><p class="muted">Practica con operaciones ficticias y registra tus movimientos reales manualmente desde el extracto de tu broker. Así podrás revisar la estrategia sin dar acceso a tu cuenta.</p>
  <button onclick="showTab('trade')">Probar una operación simulada</button></div>
 </section>
@@ -51,14 +52,18 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin-top:25px}
  <div class="row"><div style="flex:1"><label>Tipo</label><select id="side"><option value="buy">Compra</option><option value="sell">Venta</option></select></div><div style="flex:1"><label>Importe en euros</label><input id="amount" type="number" min="0.01" step="0.01" placeholder="5,00"></div></div>
  <label>Precio de referencia (opcional, €)</label><input id="price" type="number" min="0" step="0.0001" placeholder="No se consulta automáticamente">
  <button id="saveTrade">Guardar simulación</button><p id="tradeMsg" class="muted"></p></div></section>
-<section id="report" class="hidden"><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><button class="secondary" id="export">Exportar informe CSV</button></div></section>
-<section id="settings" class="hidden"><div class="card"><h2>Configuración</h2><label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="47"><button id="saveSettings">Guardar capital</button><p class="muted">Los datos se guardan únicamente en este dispositivo mediante almacenamiento local del navegador.</p></div>
+<section id="report" class="hidden"><div class="card"><h2>Informe de cierre</h2><p class="muted">Genera un resumen cuando termine la sesión. La app no puede ejecutarse en segundo plano ni consultar cotizaciones en directo todavía.</p><button id="makeReport">Generar informe ahora</button><div id="reportSummary" class="item muted">Aún no se ha generado el informe de hoy.</div></div><div class="card"><h2>Actividad registrada</h2><div id="activity" class="muted">Sin movimientos todavía.</div><button class="secondary" id="export">Exportar informe CSV</button></div></section>
+<section id="settings" class="hidden"><div class="card"><h2>Preferencias de inversión</h2><label>Perfil inversor</label><select id="profile"><option value="Dinámico">Dinámico: más volatilidad y potencial de crecimiento</option><option value="Equilibrado">Equilibrado</option><option value="Conservador">Conservador</option></select>
+<label>Autonomía</label><select id="autonomy"><option value="Seguimiento simulado; revisión del usuario">Seguimiento de cartera simulada; yo reviso</option><option value="Propone; autorización del usuario">Propone; yo autorizo las operaciones</option></select>
+<label>Momento del informe</label><select id="reportTime"><option value="Al cierre del mercado">Al cierre del mercado</option><option value="Antes de la apertura">Antes de la apertura</option><option value="Dos veces al día">Dos veces al día</option></select>
+<label>Capital inicial (€)</label><input id="startCapital" type="number" min="0" step=".01" value="47"><button id="saveSettings">Guardar preferencias</button><p class="muted">Tus preferencias se guardan en este dispositivo. El informe se genera al abrir la app y solicitarlo; esta versión no puede enviar avisos ni operar mientras está cerrada.</p></div>
 <div class="card"><h2>Conexión con Trade Republic</h2><p class="muted">Actualmente no hay una API pública oficial de trading para conectar esta aplicación. La vía segura inicial es exportar los movimientos desde Trade Republic e importarlos o registrarlos manualmente. Nunca compartas tus credenciales con conectores no oficiales.</p></div></section>
 <footer>Herramienta educativa de seguimiento. No es asesoramiento financiero ni ejecuta inversiones reales.</footer>
 </main>
 <script>
 const euro=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n||0);
 let data=JSON.parse(localStorage.getItem('invIA')||'null')||{initial:47,cash:47,trades:[],holdings:{}};
+data.preferences=data.preferences||{profile:'Dinámico',autonomy:'Seguimiento simulado; revisión del usuario',reportTime:'Al cierre del mercado'};
 function save(){localStorage.setItem('invIA',JSON.stringify(data));render()}
 function showTab(id){document.querySelectorAll('main section[id]').forEach(s=>s.classList.toggle('hidden',s.id!==id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id))}
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
@@ -70,6 +75,13 @@ function render(){
  let hs=Object.entries(data.holdings);document.getElementById('holdingList').innerHTML=hs.length?hs.map(([k,h])=>`<div class="item row"><span>${esc(k)}<br><small class="muted">${h.units.toFixed(4)} unidades simuladas</small></span><b>${euro(h.cost)}</b></div>`).join(''):'Todavía no tienes posiciones.';
  document.getElementById('activity').innerHTML=data.trades.length?data.trades.slice().reverse().map(t=>`<div class="item"><div class="row"><b>${esc(t.side==='buy'?'Compra simulada':'Venta simulada')} · ${esc(t.asset)}</b><b>${euro(t.amount)}</b></div><small class="muted">${new Date(t.date).toLocaleString('es-ES')} · Precio de referencia: ${t.price?euro(t.price):'no indicado'}</small></div>`).join(''):'Sin movimientos todavía.';
  document.getElementById('startCapital').value=data.initial;
+ document.getElementById('profile').value=data.preferences.profile;
+ document.getElementById('autonomy').value=data.preferences.autonomy;
+ document.getElementById('reportTime').value=data.preferences.reportTime;
+ document.getElementById('profileLabel').textContent=data.preferences.profile;
+ document.getElementById('autonomyLabel').textContent=data.preferences.autonomy.startsWith('Seguimiento')?'Seguimiento simulado':'Propuestas con autorización';
+ document.getElementById('reportLabel').textContent=data.preferences.reportTime;
+ document.getElementById('strategyText').textContent=data.preferences.profile==='Dinámico'?'Busca crecimiento aceptando volatilidad; sin derivados ni apalancamiento.':'Perfil '+data.preferences.profile+'. Sin derivados ni apalancamiento.';
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 document.getElementById('saveTrade').onclick=()=>{
@@ -81,7 +93,8 @@ document.getElementById('saveTrade').onclick=()=>{
  else{data.cash+=amount;let h=data.holdings[asset];let ratio=amount/h.cost;h.cost-=amount;h.units*=1-ratio;if(h.cost<.005)delete data.holdings[asset]}
  data.trades.push({asset,side,amount,price,date:new Date().toISOString()});save();msg.textContent='Simulación guardada en este dispositivo.';document.getElementById('asset').value='';document.getElementById('amount').value='';document.getElementById('price').value='';
 };
-document.getElementById('saveSettings').onclick=()=>{let n=Number(document.getElementById('startCapital').value);if(n>=0&&Number.isFinite(n)){data.initial=n;data.cash=n-Object.values(data.holdings).reduce((a,h)=>a+h.cost,0);if(data.cash<0){alert('El capital no puede ser inferior al importe simulado ya invertido.');data.cash=0;return}save()}};
+document.getElementById('saveSettings').onclick=()=>{let n=Number(document.getElementById('startCapital').value);if(n>=0&&Number.isFinite(n)){data.initial=n;data.cash=n-Object.values(data.holdings).reduce((a,h)=>a+h.cost,0);if(data.cash<0){alert('El capital no puede ser inferior al importe simulado ya invertido.');data.cash=0;return}data.preferences={profile:document.getElementById('profile').value,autonomy:document.getElementById('autonomy').value,reportTime:document.getElementById('reportTime').value};save();alert('Preferencias guardadas en este dispositivo.')}};
+document.getElementById('makeReport').onclick=()=>{let invested=Object.values(data.holdings).reduce((a,h)=>a+h.cost,0),total=data.cash+invested,pnl=total-data.initial;let date=new Date().toLocaleString('es-ES');document.getElementById('reportSummary').innerHTML='<b>Informe generado: '+esc(date)+'</b><br>Capital simulado: '+euro(total)+'<br>Efectivo: '+euro(data.cash)+'<br>Posiciones: '+Object.keys(data.holdings).length+'<br>Operaciones registradas: '+data.trades.length+'<br>Resultado frente al capital inicial: '+euro(pnl)+'<br><br><span class="muted">Sin cotizaciones de mercado conectadas: no se puede calcular rentabilidad diaria real ni recomendar una operación basada en precios actuales.</span>';};
 document.getElementById('export').onclick=()=>{let rows=[['fecha','activo','tipo','importe_eur','precio_referencia'],...data.trades.map(t=>[t.date,t.asset,t.side,t.amount,t.price])];let csv=rows.map(r=>r.map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(';')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='informe-inversor-ia.csv';a.click();URL.revokeObjectURL(a.href)};
 render();
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
